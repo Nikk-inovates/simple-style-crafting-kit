@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = 'https://abcd1234.ngrok.io';
 
 /**
  * API utility function to send a question to the FastAPI backend
