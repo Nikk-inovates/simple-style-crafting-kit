@@ -1,5 +1,5 @@
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://www.bignalytics-chatbot.me/chat';
 
 /**
  * API utility function to send a question to the FastAPI backend
