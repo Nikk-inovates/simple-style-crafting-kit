@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { FileText, Send, ThumbsUp, ThumbsDown, Clock, BookOpen, Heart, Rocket, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,7 +40,7 @@ const Index = () => {
    */
   const checkBackendStatus = async () => {
     try {
-      const response = await fetch('http://localhost:8000/');
+      const response = await fetch('https://bignalytics-chatbot.me/');
       if (response.ok) {
         setBackendStatus('ready');
       } else {
