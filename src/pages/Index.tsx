@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { FileText, Send, ThumbsUp, ThumbsDown, Clock, BookOpen, Heart, Rocket, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
 import { askQuestion } from '@/lib/api';
-
 interface ChatMessage {
   timestamp: string;
   question: string;
@@ -18,7 +16,6 @@ interface ChatMessage {
     comment: string;
   };
 }
-
 const Index = () => {
   const [question, setQuestion] = useState('');
   const [currentAnswer, setCurrentAnswer] = useState('');
@@ -64,21 +61,18 @@ const Index = () => {
       toast({
         title: "❌ Backend not available",
         description: "Please make sure the FastAPI backend is running on http://localhost:8000",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     setIsLoading(true);
     setCurrentQuestion(question);
-    
     try {
       // Call the backend API
       const answer = await askQuestion(question);
-      
       setCurrentAnswer(answer);
       setShowFeedback(true);
-      
+
       // Add to chat history (keep last 10)
       const newChat: ChatMessage = {
         timestamp: new Date().toLocaleString(),
@@ -86,22 +80,18 @@ const Index = () => {
         answer: answer
       };
       setChatHistory(prev => [newChat, ...prev].slice(0, 10));
-      
       toast({
         title: "✅ Question processed successfully!",
-        description: "Your answer is ready below.",
+        description: "Your answer is ready below."
       });
-      
     } catch (error) {
       console.error('Error asking question:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      
       toast({
         title: "❌ Failed to get answer",
         description: errorMessage,
-        variant: "destructive",
+        variant: "destructive"
       });
-      
       setCurrentAnswer('');
       setShowFeedback(false);
     } finally {
@@ -125,23 +115,16 @@ const Index = () => {
     });
 
     // Update chat history with feedback
-    setChatHistory(prev => 
-      prev.map(chat => 
-        chat.question === currentQuestion && chat.answer === currentAnswer
-          ? {
-              ...chat,
-              feedback: {
-                rating: feedbackRating,
-                comment: feedbackComment
-              }
-            }
-          : chat
-      )
-    );
-
+    setChatHistory(prev => prev.map(chat => chat.question === currentQuestion && chat.answer === currentAnswer ? {
+      ...chat,
+      feedback: {
+        rating: feedbackRating,
+        comment: feedbackComment
+      }
+    } : chat));
     toast({
       title: "✅ Feedback submitted. Thank you!",
-      description: "Your feedback helps us improve the system.",
+      description: "Your feedback helps us improve the system."
     });
 
     // Reset feedback form
@@ -149,9 +132,7 @@ const Index = () => {
     setFeedbackComment('');
     setShowFeedback(false);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -173,9 +154,7 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 max-h-96 overflow-y-auto">
-                {chatHistory.length > 0 ? (
-                  chatHistory.map((chat, index) => (
-                    <Card key={index} className="p-3 bg-gray-50 border border-gray-200">
+                {chatHistory.length > 0 ? chatHistory.map((chat, index) => <Card key={index} className="p-3 bg-gray-50 border border-gray-200">
                       <div className="flex items-start gap-2 mb-2">
                         <Clock className="w-4 h-4 text-gray-500 mt-1 flex-shrink-0" />
                         <span className="text-xs text-gray-500">{chat.timestamp}</span>
@@ -189,19 +168,13 @@ const Index = () => {
                           <p className="text-sm font-medium text-gray-700">A:</p>
                           <p className="text-sm text-gray-600 line-clamp-3">{chat.answer}</p>
                         </div>
-                        {chat.feedback && (
-                          <div className="text-xs text-gray-500">
+                        {chat.feedback && <div className="text-xs text-gray-500">
                             Feedback: {chat.feedback.rating}
-                          </div>
-                        )}
+                          </div>}
                       </div>
-                    </Card>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
+                    </Card>) : <div className="text-center py-8">
                     <p className="text-gray-500 text-sm">No chat history yet.</p>
-                  </div>
-                )}
+                  </div>}
               </CardContent>
             </Card>
           </div>
@@ -212,41 +185,30 @@ const Index = () => {
             <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  {backendStatus === 'checking' && (
-                    <>
+                  {backendStatus === 'checking' && <>
                       <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
                       <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
                         🔄 Checking backend...
                       </Badge>
                       <span className="text-sm text-gray-600">Connecting to FastAPI backend</span>
-                    </>
-                  )}
-                  {backendStatus === 'ready' && (
-                    <>
+                    </>}
+                  {backendStatus === 'ready' && <>
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                         ✅ Backend connected!
                       </Badge>
                       <span className="text-sm text-gray-600">Ready to process questions</span>
-                    </>
-                  )}
-                  {backendStatus === 'error' && (
-                    <>
+                    </>}
+                  {backendStatus === 'error' && <>
                       <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                       <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
                         ❌ Backend offline
                       </Badge>
-                      <span className="text-sm text-gray-600">Make sure FastAPI is running on http://localhost:8000</span>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={checkBackendStatus}
-                        className="ml-2"
-                      >
+                      <span className="text-sm text-gray-600">Make sure FastAPI is running on http://bignalytics-chatbot.me </span>
+                      <Button variant="outline" size="sm" onClick={checkBackendStatus} className="ml-2">
                         Retry
                       </Button>
-                    </>
-                  )}
+                    </>}
                 </div>
               </CardContent>
             </Card>
@@ -259,38 +221,23 @@ const Index = () => {
               <CardContent>
                 <form onSubmit={handleSubmitQuestion} className="space-y-4">
                   <div>
-                    <Input
-                      placeholder="Ask a question about knowledge.pdf..."
-                      value={question}
-                      onChange={(e) => setQuestion(e.target.value)}
-                      className="text-base"
-                      disabled={isLoading || backendStatus !== 'ready'}
-                    />
+                    <Input placeholder="Ask a question about knowledge.pdf..." value={question} onChange={e => setQuestion(e.target.value)} className="text-base" disabled={isLoading || backendStatus !== 'ready'} />
                   </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                    disabled={isLoading || !question.trim() || backendStatus !== 'ready'}
-                  >
-                    {isLoading ? (
-                      <>
+                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white" disabled={isLoading || !question.trim() || backendStatus !== 'ready'}>
+                    {isLoading ? <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                         🤖 Processing with DeepSeek...
-                      </>
-                    ) : (
-                      <>
+                      </> : <>
                         <Send className="w-4 h-4 mr-2" />
                         🚀 Send
-                      </>
-                    )}
+                      </>}
                   </Button>
                 </form>
               </CardContent>
             </Card>
 
             {/* Answer Display */}
-            {currentAnswer && (
-              <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+            {currentAnswer && <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-xl text-gray-800">💬 Answer</CardTitle>
                 </CardHeader>
@@ -299,12 +246,10 @@ const Index = () => {
                     <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{currentAnswer}</p>
                   </div>
                 </CardContent>
-              </Card>
-            )}
+              </Card>}
 
             {/* Feedback Form */}
-            {showFeedback && currentAnswer && (
-              <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
+            {showFeedback && currentAnswer && <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-xl text-gray-800">📝 Feedback</CardTitle>
                 </CardHeader>
@@ -313,45 +258,25 @@ const Index = () => {
                     <div>
                       <p className="text-sm font-medium text-gray-700 mb-3">Was this helpful?</p>
                       <div className="flex gap-4">
-                        <Button
-                          type="button"
-                          variant={feedbackRating === '👍 Yes' ? 'default' : 'outline'}
-                          onClick={() => setFeedbackRating('👍 Yes')}
-                          className="flex items-center gap-2"
-                        >
+                        <Button type="button" variant={feedbackRating === '👍 Yes' ? 'default' : 'outline'} onClick={() => setFeedbackRating('👍 Yes')} className="flex items-center gap-2">
                           <ThumbsUp className="w-4 h-4" />
                           👍 Yes
                         </Button>
-                        <Button
-                          type="button"
-                          variant={feedbackRating === '👎 No' ? 'default' : 'outline'}
-                          onClick={() => setFeedbackRating('👎 No')}
-                          className="flex items-center gap-2"
-                        >
+                        <Button type="button" variant={feedbackRating === '👎 No' ? 'default' : 'outline'} onClick={() => setFeedbackRating('👎 No')} className="flex items-center gap-2">
                           <ThumbsDown className="w-4 h-4" />
                           👎 No
                         </Button>
                       </div>
                     </div>
                     <div>
-                      <Textarea
-                        placeholder="Any comments?"
-                        value={feedbackComment}
-                        onChange={(e) => setFeedbackComment(e.target.value)}
-                        rows={3}
-                      />
+                      <Textarea placeholder="Any comments?" value={feedbackComment} onChange={e => setFeedbackComment(e.target.value)} rows={3} />
                     </div>
-                    <Button 
-                      onClick={handleSubmitFeedback}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white"
-                      disabled={!feedbackRating}
-                    >
+                    <Button onClick={handleSubmitFeedback} className="w-full bg-green-600 hover:bg-green-700 text-white" disabled={!feedbackRating}>
                       Submit Feedback
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
-            )}
+              </Card>}
           </div>
         </div>
       </div>
@@ -370,8 +295,6 @@ const Index = () => {
 
       {/* Bottom padding to account for fixed footer */}
       <div className="h-16"></div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
