@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { FileText, Send, ThumbsUp, ThumbsDown, Clock, BookOpen, Heart, Rocket, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
+import { askQuestion } from '@/lib/api';
 
 interface ChatMessage {
   timestamp: string;
@@ -27,67 +27,116 @@ const Index = () => {
   const [feedbackRating, setFeedbackRating] = useState<'👍 Yes' | '👎 No' | ''>('');
   const [feedbackComment, setFeedbackComment] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'ready' | 'error'>('checking');
 
-  // Load chat history on component mount
+  // Check backend status on component mount
   useEffect(() => {
-    // Simulate loading chat history
-    const mockHistory: ChatMessage[] = [
-      {
-        timestamp: '2024-01-15 14:30:22',
-        question: 'What is machine learning?',
-        answer: 'Machine learning is a subset of artificial intelligence that enables computers to learn and improve from experience without being explicitly programmed.'
-      },
-      {
-        timestamp: '2024-01-15 13:45:10',
-        question: 'How does deep learning work?',
-        answer: 'Deep learning uses neural networks with multiple layers to model and understand complex patterns in data, mimicking how the human brain processes information.'
-      }
-    ];
-    setChatHistory(mockHistory);
+    checkBackendStatus();
   }, []);
 
+  /**
+   * Check if the FastAPI backend is running and accessible
+   */
+  const checkBackendStatus = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/');
+      if (response.ok) {
+        setBackendStatus('ready');
+      } else {
+        setBackendStatus('error');
+      }
+    } catch (error) {
+      console.error('Backend check failed:', error);
+      setBackendStatus('error');
+    }
+  };
+
+  /**
+   * Handle form submission to ask a question
+   */
   const handleSubmitQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim()) return;
 
+    // Check if backend is ready
+    if (backendStatus !== 'ready') {
+      toast({
+        title: "❌ Backend not available",
+        description: "Please make sure the FastAPI backend is running on http://localhost:8000",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     setCurrentQuestion(question);
-
-    // Simulate AI processing
-    setTimeout(() => {
-      const mockAnswer = `This is a simulated response to your question: "${question}". The system would normally process your PDF document using DeepSeek AI and FAISS vector search to provide relevant answers based on the document content.`;
+    
+    try {
+      // Call the backend API
+      const answer = await askQuestion(question);
       
-      setCurrentAnswer(mockAnswer);
+      setCurrentAnswer(answer);
       setShowFeedback(true);
-      setIsLoading(false);
       
-      // Add to chat history
+      // Add to chat history (keep last 10)
       const newChat: ChatMessage = {
         timestamp: new Date().toLocaleString(),
         question: question,
-        answer: mockAnswer
+        answer: answer
       };
-      setChatHistory(prev => [newChat, ...prev]);
+      setChatHistory(prev => [newChat, ...prev].slice(0, 10));
       
       toast({
         title: "✅ Question processed successfully!",
         description: "Your answer is ready below.",
       });
-    }, 2000);
-
-    setQuestion('');
+      
+    } catch (error) {
+      console.error('Error asking question:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      toast({
+        title: "❌ Failed to get answer",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      
+      setCurrentAnswer('');
+      setShowFeedback(false);
+    } finally {
+      setIsLoading(false);
+      setQuestion('');
+    }
   };
 
+  /**
+   * Handle feedback submission
+   */
   const handleSubmitFeedback = () => {
     if (!feedbackRating) return;
 
-    // Log feedback
+    // Log feedback to console (you can extend this to send to backend later)
     console.log('Feedback submitted:', {
       question: currentQuestion,
       answer: currentAnswer,
       rating: feedbackRating,
       comment: feedbackComment
     });
+
+    // Update chat history with feedback
+    setChatHistory(prev => 
+      prev.map(chat => 
+        chat.question === currentQuestion && chat.answer === currentAnswer
+          ? {
+              ...chat,
+              feedback: {
+                rating: feedbackRating,
+                comment: feedbackComment
+              }
+            }
+          : chat
+      )
+    );
 
     toast({
       title: "✅ Feedback submitted. Thank you!",
@@ -124,7 +173,7 @@ const Index = () => {
               </CardHeader>
               <CardContent className="space-y-3 max-h-96 overflow-y-auto">
                 {chatHistory.length > 0 ? (
-                  chatHistory.slice(0, 10).map((chat, index) => (
+                  chatHistory.map((chat, index) => (
                     <Card key={index} className="p-3 bg-gray-50 border border-gray-200">
                       <div className="flex items-start gap-2 mb-2">
                         <Clock className="w-4 h-4 text-gray-500 mt-1 flex-shrink-0" />
@@ -139,6 +188,11 @@ const Index = () => {
                           <p className="text-sm font-medium text-gray-700">A:</p>
                           <p className="text-sm text-gray-600 line-clamp-3">{chat.answer}</p>
                         </div>
+                        {chat.feedback && (
+                          <div className="text-xs text-gray-500">
+                            Feedback: {chat.feedback.rating}
+                          </div>
+                        )}
                       </div>
                     </Card>
                   ))
@@ -153,15 +207,45 @@ const Index = () => {
 
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
-            {/* PDF Status */}
+            {/* Backend Status */}
             <Card className="bg-white/80 backdrop-blur-sm border-gray-200 shadow-lg">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                    ✅ Ready for questions!
-                  </Badge>
-                  <span className="text-sm text-gray-600">PDF loaded and indexed successfully</span>
+                  {backendStatus === 'checking' && (
+                    <>
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                      <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                        🔄 Checking backend...
+                      </Badge>
+                      <span className="text-sm text-gray-600">Connecting to FastAPI backend</span>
+                    </>
+                  )}
+                  {backendStatus === 'ready' && (
+                    <>
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                        ✅ Backend connected!
+                      </Badge>
+                      <span className="text-sm text-gray-600">Ready to process questions</span>
+                    </>
+                  )}
+                  {backendStatus === 'error' && (
+                    <>
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                        ❌ Backend offline
+                      </Badge>
+                      <span className="text-sm text-gray-600">Make sure FastAPI is running on http://localhost:8000</span>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={checkBackendStatus}
+                        className="ml-2"
+                      >
+                        Retry
+                      </Button>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -179,18 +263,18 @@ const Index = () => {
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
                       className="text-base"
-                      disabled={isLoading}
+                      disabled={isLoading || backendStatus !== 'ready'}
                     />
                   </div>
                   <Button 
                     type="submit" 
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                    disabled={isLoading || !question.trim()}
+                    disabled={isLoading || !question.trim() || backendStatus !== 'ready'}
                   >
                     {isLoading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                        🤖 Thinking...
+                        🤖 Processing with DeepSeek...
                       </>
                     ) : (
                       <>
@@ -211,7 +295,7 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-gray max-w-none">
-                    <p className="text-gray-700 leading-relaxed">{currentAnswer}</p>
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{currentAnswer}</p>
                   </div>
                 </CardContent>
               </Card>
