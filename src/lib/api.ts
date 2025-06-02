@@ -1,4 +1,5 @@
-const API_BASE_URL = 'https://abcd1234.ngrok.io';
+
+const API_BASE_URL = 'https://bignalytics-chatbot.me';
 
 /**
  * API utility function to send a question to the FastAPI backend
@@ -44,6 +45,58 @@ export async function askQuestion(question: string): Promise<string> {
     if (error instanceof Error) {
       if (error.message.includes('fetch')) {
         throw new Error('Failed to connect to the server. Make sure the backend is running on http://localhost:8000');
+      }
+      throw error;
+    }
+    throw new Error('An unexpected error occurred');
+  }
+}
+
+/**
+ * Submit feedback to the backend
+ * @param question - The original question
+ * @param answer - The answer that was provided
+ * @param rating - User's rating (thumbs up/down)
+ * @param comment - Optional feedback comment
+ * @returns Promise<string> - Success message from backend
+ */
+export async function submitFeedback(
+  question: string, 
+  answer: string, 
+  rating: string, 
+  comment: string = ''
+): Promise<string> {
+  try {
+    const formData = new FormData();
+    formData.append('question', question);
+    formData.append('answer', answer);
+    formData.append('rating', rating);
+    formData.append('comment', comment);
+
+    const response = await fetch(`${API_BASE_URL}/submit-feedback/`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        }
+      } catch {
+        // If we can't parse JSON, use the default error message
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    return data.message || 'Feedback submitted successfully';
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes('fetch')) {
+        throw new Error('Failed to connect to the server. Make sure the backend is running');
       }
       throw error;
     }
