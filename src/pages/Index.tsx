@@ -41,7 +41,7 @@ const Index = () => {
    */
   const checkBackendStatus = async () => {
     try {
-      const response = await fetch('https://bignalytics-chatbot.me/');
+      const response = await fetch('https://bignalytics-chatbot.me');
       if (response.ok) {
         setBackendStatus('ready');
       } else {
