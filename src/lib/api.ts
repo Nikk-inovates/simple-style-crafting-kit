@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'https://bignalytics-chatbot.me';
 
 /**
@@ -73,7 +72,7 @@ export async function submitFeedback(
     formData.append('rating', rating);
     formData.append('comment', comment);
 
-    const response = await fetch(`${API_BASE_URL}/submit-feedback/`, {
+    const response = await fetch(`${API_BASE_URL}/log-feedback/`, {
       method: 'POST',
       body: formData,
     });
