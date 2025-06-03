@@ -146,7 +146,7 @@ const Index = () => {
         <div className="text-center mb-8">
           <div className="bg-white/95 backdrop-blur-sm border shadow-lg rounded-2xl p-8 mb-6">
             <div className="flex items-center justify-center gap-4 mb-4">
-              <img src="https://bignalytics.in/wp-content/uploads/2021/04/logo-1.png" alt="Bignalytics Logo" className="h-12 w-auto" />
+              <img src="https://bignalytics.in/wp-content/uploads/2021/04/logo-1.png" alt="Bignalytics Logo" className="h-20 w-auto object-contain" />
               <h1 className="text-4xl font-extrabold text-blue-700">
                 Bignalytics Chatbot
               </h1>
