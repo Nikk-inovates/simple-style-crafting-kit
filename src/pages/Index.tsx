@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { FileText, Send, ThumbsUp, ThumbsDown, Clock, BookOpen, Heart, Rocket, Sparkles, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -174,7 +173,7 @@ const Index = () => {
                   📚 Chat History
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 max-h-96 overflow-y-auto p-6 custom-scrollbar">
+              <CardContent className="space-y-4 max-h-[600px] overflow-y-auto p-6 custom-scrollbar">
                 {chatHistory.length > 0 ? chatHistory.map((chat, index) => (
                   <Card key={index} className="p-4 bg-gradient-to-br from-gray-50 to-blue-50 border-2 border-blue-100 shadow-lg rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-blue-200 animate-fade-in" style={{animationDelay: `${index * 100}ms`}}>
                     <div className="flex items-start gap-3 mb-3">
@@ -184,11 +183,11 @@ const Index = () => {
                     <div className="space-y-3">
                       <div className="bg-white/90 rounded-xl p-3 border-l-4 border-blue-400 shadow-sm">
                         <p className="text-sm font-semibold text-gray-700 mb-1">Q:</p>
-                        <p className="text-sm text-gray-600 leading-relaxed">{chat.question}</p>
+                        <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{chat.question}</p>
                       </div>
                       <div className="bg-white/90 rounded-xl p-3 border-l-4 border-green-400 shadow-sm">
                         <p className="text-sm font-semibold text-gray-700 mb-1">A:</p>
-                        <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">{chat.answer}</p>
+                        <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{chat.answer}</p>
                       </div>
                       {chat.feedback && (
                         <div className="text-xs text-gray-500 bg-white/80 rounded-lg p-3 border-2 border-gray-200 shadow-sm">
