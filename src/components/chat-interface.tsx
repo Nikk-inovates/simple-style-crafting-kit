@@ -78,7 +78,7 @@ export function ChatInterface({
       </div>
 
       {/* Main content area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-32">
         {!currentAnswer && !isLoading && (
           <div className="text-center py-12">
             <div className="max-w-md mx-auto">
@@ -124,53 +124,55 @@ export function ChatInterface({
               </div>
             )}
 
-            {/* Feedback */}
+            {/* Feedback - positioned right after the bot response */}
             {showFeedback && currentAnswer && (
               <div className="flex justify-start">
-                <Card className="p-4 max-w-md">
-                  <p className="text-sm font-medium mb-3">Was this helpful?</p>
-                  <div className="flex gap-2 mb-4">
+                <div className="max-w-xs md:max-w-md ml-0">
+                  <Card className="p-4">
+                    <p className="text-sm font-medium mb-3">Was this helpful?</p>
+                    <div className="flex gap-2 mb-4">
+                      <Button
+                        variant={feedbackRating === '👍 Yes' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setFeedbackRating('👍 Yes')}
+                      >
+                        <ThumbsUp className="h-4 w-4 mr-1" />
+                        Yes
+                      </Button>
+                      <Button
+                        variant={feedbackRating === '👎 No' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setFeedbackRating('👎 No')}
+                      >
+                        <ThumbsDown className="h-4 w-4 mr-1" />
+                        No
+                      </Button>
+                    </div>
+                    <Textarea
+                      placeholder="Any additional feedback..."
+                      value={feedbackComment}
+                      onChange={(e) => setFeedbackComment(e.target.value)}
+                      className="mb-3"
+                      rows={2}
+                    />
                     <Button
-                      variant={feedbackRating === '👍 Yes' ? 'default' : 'outline'}
+                      onClick={handleFeedbackSubmit}
+                      disabled={!feedbackRating || isSubmittingFeedback}
                       size="sm"
-                      onClick={() => setFeedbackRating('👍 Yes')}
+                      className="w-full"
                     >
-                      <ThumbsUp className="h-4 w-4 mr-1" />
-                      Yes
+                      {isSubmittingFeedback ? 'Submitting...' : 'Submit Feedback'}
                     </Button>
-                    <Button
-                      variant={feedbackRating === '👎 No' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setFeedbackRating('👎 No')}
-                    >
-                      <ThumbsDown className="h-4 w-4 mr-1" />
-                      No
-                    </Button>
-                  </div>
-                  <Textarea
-                    placeholder="Any additional feedback..."
-                    value={feedbackComment}
-                    onChange={(e) => setFeedbackComment(e.target.value)}
-                    className="mb-3"
-                    rows={2}
-                  />
-                  <Button
-                    onClick={handleFeedbackSubmit}
-                    disabled={!feedbackRating || isSubmittingFeedback}
-                    size="sm"
-                    className="w-full"
-                  >
-                    {isSubmittingFeedback ? 'Submitting...' : 'Submit Feedback'}
-                  </Button>
-                </Card>
+                  </Card>
+                </div>
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Input area */}
-      <div className="p-4 border-t border-border bg-background">
+      {/* Input area - positioned higher */}
+      <div className="fixed bottom-0 left-64 right-0 p-4 border-t border-border bg-background/80 backdrop-blur">
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
           <div className="relative">
             <Textarea

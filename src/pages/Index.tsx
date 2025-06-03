@@ -124,11 +124,18 @@ const Index = () => {
     setShowFeedback(false);
   };
 
+  const handleChatSelect = (chat: ChatMessage) => {
+    setCurrentQuestion(chat.question);
+    setCurrentAnswer(chat.answer);
+    setShowFeedback(false);
+  };
+
   return (
     <div className="flex h-screen bg-background text-foreground">
       <ChatSidebar 
         chatHistory={chatHistory} 
         onNewChat={handleNewChat}
+        onChatSelect={handleChatSelect}
       />
       <div className="flex-1">
         <ChatInterface

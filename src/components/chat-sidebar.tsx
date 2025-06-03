@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { MessageSquare, Plus, Clock, Settings } from 'lucide-react'
+import { MessageSquare, Plus, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -18,9 +18,10 @@ interface ChatMessage {
 interface ChatSidebarProps {
   chatHistory: ChatMessage[]
   onNewChat?: () => void
+  onChatSelect?: (chat: ChatMessage) => void
 }
 
-export function ChatSidebar({ chatHistory, onNewChat }: ChatSidebarProps) {
+export function ChatSidebar({ chatHistory, onNewChat, onChatSelect }: ChatSidebarProps) {
   return (
     <div className="flex flex-col h-full w-64 bg-background border-r border-border">
       {/* Header */}
@@ -60,6 +61,7 @@ export function ChatSidebar({ chatHistory, onNewChat }: ChatSidebarProps) {
                 <div
                   key={index}
                   className="p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group"
+                  onClick={() => onChatSelect?.(chat)}
                 >
                   <div className="text-sm font-medium text-foreground line-clamp-1 mb-1">
                     {chat.question}
@@ -77,14 +79,6 @@ export function ChatSidebar({ chatHistory, onNewChat }: ChatSidebarProps) {
             )}
           </div>
         </ScrollArea>
-      </div>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-border">
-        <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground">
-          <Settings className="h-4 w-4" />
-          Settings
-        </Button>
       </div>
     </div>
   )
