@@ -131,7 +131,7 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
+    <div className="flex h-screen bg-white dark:bg-gray-900">
       <ChatSidebar 
         chatHistory={chatHistory} 
         onNewChat={handleNewChat}
