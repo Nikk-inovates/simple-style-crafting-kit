@@ -23,12 +23,12 @@ interface ChatSidebarProps {
 
 export function ChatSidebar({ chatHistory, onNewChat, onChatSelect }: ChatSidebarProps) {
   return (
-    <div className="flex flex-col h-full w-80 bg-gray-200/90 dark:bg-gray-800/90 backdrop-blur-2xl backdrop-saturate-150 border-r border-gray-300 dark:border-gray-600 relative overflow-hidden">
+    <div className="fixed left-0 top-0 z-30 flex flex-col h-screen w-80 bg-gray-200/90 dark:bg-gray-800/90 backdrop-blur-2xl backdrop-saturate-150 border-r border-gray-300 dark:border-gray-600 relative overflow-hidden">
       {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-300/10 via-transparent to-gray-400/10 opacity-50"></div>
       
       {/* Enhanced Header */}
-      <div className="relative z-10 flex items-center justify-between p-6 border-b border-gray-300 dark:border-gray-600 bg-gray-100/60 dark:bg-gray-700/60 backdrop-blur-xl">
+      <div className="relative z-10 flex items-center justify-between p-6 border-b border-gray-300 dark:border-gray-600 bg-gray-100/60 dark:bg-gray-700/60 backdrop-blur-xl flex-shrink-0">
         <div className="flex items-center gap-4">
           <div className="relative group">
             <img 
@@ -49,7 +49,7 @@ export function ChatSidebar({ chatHistory, onNewChat, onChatSelect }: ChatSideba
       </div>
 
       {/* Enhanced New Chat Button */}
-      <div className="relative z-10 p-6 pb-4">
+      <div className="relative z-10 p-6 pb-4 flex-shrink-0">
         <Button 
           onClick={onNewChat}
           className="w-full justify-start gap-4 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 text-white hover:from-gray-600 hover:via-gray-700 hover:to-gray-600 rounded-2xl shadow-2xl h-14 transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl group relative overflow-hidden border border-gray-500"
@@ -61,7 +61,7 @@ export function ChatSidebar({ chatHistory, onNewChat, onChatSelect }: ChatSideba
       </div>
 
       {/* Enhanced Chat History */}
-      <div className="flex-1 px-6 relative z-10">
+      <div className="flex-1 px-6 relative z-10 min-h-0">
         <div className="flex items-center gap-3 mb-5">
           <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400 animate-pulse" />
           <h3 className="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
@@ -112,7 +112,7 @@ export function ChatSidebar({ chatHistory, onNewChat, onChatSelect }: ChatSideba
       </div>
 
       {/* Enhanced Footer */}
-      <div className="relative z-10 p-6 pt-4 border-t border-gray-300 dark:border-gray-600 bg-gray-100/60 dark:bg-gray-700/60 backdrop-blur-xl">
+      <div className="relative z-10 p-6 pt-4 border-t border-gray-300 dark:border-gray-600 bg-gray-100/60 dark:bg-gray-700/60 backdrop-blur-xl flex-shrink-0">
         <div className="flex items-center gap-3 text-xs text-gray-600 dark:text-gray-400 transition-all duration-300 hover:text-gray-800 dark:hover:text-gray-200">
           <Sparkles className="h-4 w-4 animate-pulse" />
           <span className="font-medium">Powered by Bignalytics AI</span>

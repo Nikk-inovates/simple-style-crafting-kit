@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChatSidebar } from '@/components/chat-sidebar';
 import { ChatInterface } from '@/components/chat-interface';
@@ -136,7 +137,7 @@ const Index = () => {
         onNewChat={handleNewChat}
         onChatSelect={handleChatSelect}
       />
-      <div className="flex-1">
+      <div className="flex-1 ml-80">
         <ChatInterface
           currentAnswer={currentAnswer}
           currentQuestion={currentQuestion}
