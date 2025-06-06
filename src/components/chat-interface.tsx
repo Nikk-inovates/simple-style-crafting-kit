@@ -231,9 +231,9 @@ export function ChatInterface({
   );
 
   return (
-    <div className="flex flex-col h-screen relative">
+    <div className="flex flex-col h-screen">
       {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center justify-between w-full p-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between w-full p-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
           {backendStatus === 'checking' && (
             <div className="flex items-center gap-2">
@@ -270,18 +270,18 @@ export function ChatInterface({
 
       {/* Chat Messages Area */}
       <div className="flex-1 overflow-y-auto">
-        {/* Welcome Message */}
+        {/* Welcome Message - only show when no history and no current conversation */}
         {chatHistory.length === 0 && !currentQuestion && !isLoading && (
-          <div className="flex h-full flex-col items-center justify-center p-4">
-            <div className="text-center">
+          <div className="flex items-center justify-center min-h-full p-8">
+            <div className="text-center max-w-md">
               <div className="mb-8">
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-700 dark:via-gray-600 dark:to-gray-500 mb-8 relative shadow-lg">
-                  <Sparkles className="w-12 h-12 text-gray-600 dark:text-gray-300" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-6">
+                  <Sparkles className="w-8 h-8 text-gray-600 dark:text-gray-300" />
                 </div>
-                <h1 className="text-4xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+                <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
                   Bignalytics AI
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-md">
+                <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed">
                   Your intelligent assistant for instant answers about Bignalytics. 
                   Ask anything and get detailed, accurate responses.
                 </p>
