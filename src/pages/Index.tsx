@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChatSidebar } from '@/components/chat-sidebar';
 import { ChatInterface } from '@/components/chat-interface';
@@ -147,6 +146,7 @@ const Index = () => {
           onSubmitQuestion={handleSubmitQuestion}
           onSubmitFeedback={handleSubmitFeedback}
           isSubmittingFeedback={isSubmittingFeedback}
+          chatHistory={chatHistory}
         />
       </div>
     </div>
