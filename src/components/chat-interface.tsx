@@ -236,8 +236,9 @@ export function ChatInterface({
           </div>
         ))}
 
-        {/* Current Conversation */}
-        {(currentQuestion || isLoading) && (
+        {/* Current Conversation - Only show if current question is different from last history item */}
+        {(currentQuestion || isLoading) && 
+         (!chatHistory.length || chatHistory[0].question !== currentQuestion) && (
           <>
             {/* Current User Message */}
             {currentQuestion && (
@@ -297,56 +298,39 @@ export function ChatInterface({
               </div>
             </div>
 
-            {/* Current Feedback Section */}
+            {/* Current Feedback Section - Minimal Design */}
             {showFeedback && currentAnswer && (
-              <div className="w-full px-16 py-2">
-                <Card className="p-3 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
-                  <div className="flex items-center gap-2 mb-3">
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Was this helpful?</p>
-                  </div>
-                  <div className="flex gap-2 mb-3">
+              <div className="w-full px-16 py-3">
+                <div className="inline-flex items-center gap-3 p-3 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-sm">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Helpful?</span>
+                  <div className="flex gap-1">
                     <Button 
-                      variant={feedbackRating === '👍 Yes' ? 'default' : 'outline'} 
+                      variant={feedbackRating === '👍 Yes' ? 'default' : 'ghost'} 
                       size="sm" 
-                      onClick={() => setFeedbackRating('👍 Yes')} 
-                      className="flex-1 text-xs"
+                      onClick={() => {
+                        setFeedbackRating('👍 Yes');
+                        setTimeout(() => onSubmitFeedback('👍 Yes', ''), 100);
+                      }}
+                      className="h-8 w-8 p-0 rounded-full"
                     >
-                      <ThumbsUp className="h-3 w-3 mr-1" />
-                      Yes
+                      <ThumbsUp className="h-3 w-3" />
                     </Button>
                     <Button 
-                      variant={feedbackRating === '👎 No' ? 'default' : 'outline'} 
+                      variant={feedbackRating === '👎 No' ? 'default' : 'ghost'} 
                       size="sm" 
-                      onClick={() => setFeedbackRating('👎 No')} 
-                      className="flex-1 text-xs"
+                      onClick={() => {
+                        setFeedbackRating('👎 No');
+                        setTimeout(() => onSubmitFeedback('👎 No', ''), 100);
+                      }}
+                      className="h-8 w-8 p-0 rounded-full"
                     >
-                      <ThumbsDown className="h-3 w-3 mr-1" />
-                      No
+                      <ThumbsDown className="h-3 w-3" />
                     </Button>
                   </div>
-                  <Textarea 
-                    placeholder="Share your thoughts (optional)..." 
-                    value={feedbackComment} 
-                    onChange={e => setFeedbackComment(e.target.value)} 
-                    className="mb-3 text-xs resize-none" 
-                    rows={2} 
-                  />
-                  <Button 
-                    onClick={handleFeedbackSubmit} 
-                    disabled={!feedbackRating || isSubmittingFeedback} 
-                    size="sm" 
-                    className="w-full text-xs"
-                  >
-                    {isSubmittingFeedback ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                        Submitting...
-                      </div>
-                    ) : (
-                      'Submit Feedback'
-                    )}
-                  </Button>
-                </Card>
+                  {isSubmittingFeedback && (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                  )}
+                </div>
               </div>
             )}
           </>
