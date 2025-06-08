@@ -137,7 +137,7 @@ const Index = () => {
         onNewChat={handleNewChat}
         onChatSelect={handleChatSelect}
       />
-      <div className="flex-1 ml-80">
+      <div className="flex-1 pl-80">
         <ChatInterface
           currentAnswer={currentAnswer}
           currentQuestion={currentQuestion}
